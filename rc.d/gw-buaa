@@ -10,7 +10,7 @@
 ### END INIT INFO
 
 dir="/etc"
-cmd="/sbin/gw-buaad $2"
+cmd="/sbin/gw-buaad $1 $2"
 user="root"
 
 name=`basename $0`
@@ -68,6 +68,7 @@ case "$1" in
             if [ -f "$pid_file" ]; then
                 rm "$pid_file"
             fi
+            echo `$cmd status`
         fi
     else
         echo "Not running"
@@ -84,6 +85,7 @@ case "$1" in
     status)
     if is_running; then
         echo "Running"
+        echo `$cmd status`
     else
         echo "Stopped"
         exit 1
