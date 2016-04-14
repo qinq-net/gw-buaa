@@ -1,0 +1,46 @@
+#!/bin/sh
+# Local Vars
+NAME=gw-buaa
+LOGINCONF=/etc/gw-buaa.conf
+eval $(sed '/:/!d;/^ *#/d;s/:/ /;' < "$LOGINCONF" | while read -r key val
+ do
+  str="$key='$val'"
+  echo "$str"
+ done)
+PASSWORD=`echo -n $PASSWORD|md5sum|awk '{print substr($1,9,16)}'`
+INTERFACE=$2
+STATUSFILE=/var/run/gw-buaa.status
+
+# Login Functions
+do_login(){
+	STATUS=`curl 'http://gw.buaa.edu.cn/cgi-bin/do_login' --data "username=$USERNAME&password=$PASSWORD&drop=0&type=1&n=100" --interface $INTERFACE -s`
+	echo $STATUS > $STATUSFILE
+	echo LOGIN STATUS = $STATUS
+}
+do_logout(){
+	STATUS=`curl 'http://gw.buaa.edu.cn/cgi-bin/do_logout?action=logout' -s`
+	echo $STATUS > $STATUSFILE
+	echo LOGOUT STATUS = $STATUS
+}
+do_start(){
+	while true
+	do
+		do_login
+	done
+}
+case $1 in
+  login)
+    do_login;;
+  start)
+    do_start;;
+  stop)
+    do_logout;;
+  restart)
+    do_login
+    do_logout;;
+  status)
+    echo `cat $STATUSFILE`;;
+  *)
+    echo "Usage: $0 {start|stop|restart|status} INTERFACE"
+    exit 1;;
+esac

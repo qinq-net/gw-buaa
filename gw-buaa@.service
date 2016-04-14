@@ -1,0 +1,11 @@
+[Unit]
+Description=Login to IPv4 Gateway
+After=network.target
+
+[Service]
+ExecStart=/sbin/gw-buaad start %I
+ExecStop=/sbin/gw-buaad stop
+ExecStatus=/sbin/gw-buaad status
+
+[Install]
+WantedBy=multi-user.target
