@@ -4,7 +4,8 @@ After=network.target
 
 [Service]
 ExecStart=/sbin/gw-buaad start %I
-ExecStop=/sbin/gw-buaad stop
+ExecStop=/sbin/gw-buaad stop %I
+ExecRestart=/sbin/gw-buaad restart %I
 ExecStatus=/sbin/gw-buaad status
 
 [Install]

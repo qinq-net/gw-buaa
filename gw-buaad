@@ -26,7 +26,16 @@ do_start(){
 	while true
 	do
 		do_login
+		if [ $STATUS = 'ip_exist_error' ]; then
+			sleep 10
+		elif [ `echo $STATUS |bc` -eq 0 ]; then
+			echo An ERROR occured: $STATUS > /dev/stderr
+			exit 127
+		else
+			sleep 60
+		fi
 	done
+	
 }
 case $1 in
   login)
@@ -36,8 +45,9 @@ case $1 in
   stop)
     do_logout;;
   restart)
-    do_login
-    do_logout;;
+    do_logout
+    sleep 10
+    do_start;;
   status)
     echo `cat $STATUSFILE`;;
   *)
